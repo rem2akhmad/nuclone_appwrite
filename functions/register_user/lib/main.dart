@@ -14,12 +14,17 @@ Future<dynamic> main(final context) async {
 
   try {
     var userId = context.req.body["\$id"];
+    var email = context.req.body["email"];
+    
     final dbApi = Databases(client);
     final users = await dbApi.createDocument(
       databaseId: "nuclone_db", 
       collectionId: "users", 
-      documentId: ID.unique(),
-      data: {"accountId": userId},
+      documentId: userId,
+      data: {
+        "accountId": userId,
+        "email": email,
+        },
       permissions: [
         Permission.delete(Role.user(userId)),
         Permission.update(Role.user(userId))
