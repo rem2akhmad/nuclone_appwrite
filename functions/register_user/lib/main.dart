@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dart_appwrite/dart_appwrite.dart';
+import 'package:dart_appwrite/enums.dart';
 
 // This is your Appwrite function
 // It's executed each time we get a request
@@ -17,6 +18,7 @@ Future<dynamic> main(final context) async {
     var email = context.req.body["email"];
     
     final dbApi = Databases(client);
+    // create user's profile
     final users = await dbApi.createDocument(
       databaseId: "nuclone_db", 
       collectionId: "users", 
@@ -30,8 +32,28 @@ Future<dynamic> main(final context) async {
         Permission.update(Role.user(userId))
       ]
     );
-      context.log("users document created: ${users.$id}");
-      return context.res.empty();
+    // create user's bucket
+    final storageApi = Storage(client);
+    var bucket = await storageApi.createBucket(
+      bucketId: userId, 
+      name: userId,
+      enabled: true,
+      fileSecurity: false,
+      allowedFileExtensions: ["jpg", "png", "jpeg"],
+      compression: Compression.none,
+      encryption: false,
+      antivirus: false,
+      permissions: [
+        Permission.create(Role.user(userId)),
+        Permission.update(Role.user(userId)),
+        Permission.delete(Role.user(userId)),
+        Permission.read(Role.user(userId)),
+        Permission.read(Role.users())
+      ]);
+
+    context.log("users document created: ${users.$id}");
+    context.log("users bucket created: ${bucket.$id}");
+    return context.res.empty();
   } catch (error) {
     context.error("something went wrong ${error}");
     context.res.send("$error", 500, );
