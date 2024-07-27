@@ -21,8 +21,8 @@ Future<dynamic> main(final context) async {
     var file = await storageApi.deleteFile(bucketId: userId, fileId: fileId);
     context.log("files from post: $postId has been deleted. FileId: $fileId, file: $file");
     return context.res.send("file $file with fileId: $fileId has been deleted", 200,);
-  } catch (error) {
-    context.error("something went wrong $error");
+  } catch (error, s) {
+    context.error("something went wrong $error. stacktrase $s");
     return context.res.send("$error", 500, );
   }
 
