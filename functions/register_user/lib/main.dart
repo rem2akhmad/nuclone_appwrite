@@ -56,6 +56,6 @@ Future<dynamic> main(final context) async {
     return context.res.empty();
   } catch (error) {
     context.error("something went wrong ${error}");
-    context.res.send("$error", 500, );
+    return context.res.send("$error", 500, );
   }
 }
