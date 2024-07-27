@@ -797,6 +797,8 @@ services:
     restart: unless-stopped
     networks:
       - appwrite
+    ports:
+      - 3306:3306
     volumes:
       - appwrite-mariadb:/var/lib/mysql:rw
     environment:
