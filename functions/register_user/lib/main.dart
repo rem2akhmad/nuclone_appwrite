@@ -16,6 +16,7 @@ Future<dynamic> main(final context) async {
   try {
     var userId = context.req.body["\$id"];
     var email = context.req.body["email"];
+    var username = context.req.body["name"];
     
     final dbApi = Databases(client);
     // create user's profile
@@ -26,6 +27,7 @@ Future<dynamic> main(final context) async {
       data: {
         "accountId": userId,
         "email": email,
+        "username": username
         },
       permissions: [
         Permission.delete(Role.user(userId)),
@@ -48,7 +50,7 @@ Future<dynamic> main(final context) async {
         Permission.update(Role.user(userId)),
         Permission.delete(Role.user(userId)),
         Permission.read(Role.user(userId)),
-        Permission.read(Role.users())
+        Permission.read(Role.users()),
       ]);
 
     context.log("users document created: ${users.$id}");
