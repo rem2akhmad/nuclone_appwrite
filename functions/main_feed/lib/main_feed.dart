@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:dart_appwrite/dart_appwrite.dart';
+import 'package:dart_appwrite/models.dart';
 
 /// At this point feed is just ordered by time list of posts.
 Future<dynamic> main(final context) async {
@@ -9,20 +10,31 @@ Future<dynamic> main(final context) async {
     .setKey(Platform.environment["APPWRITE_FUNCTION_REG"]);
 
   try {
-    var offset = context.req.body["offset"] ?? 0; // if {offset} not presented default value is 0
-    var limit = context.req.body["limit"] ?? 100; // if {limit} is not presented default value is 100 
-    context.log("offset=$offset, limit=$limit");
+    var id = context.req.query["id"];
+    var limit = context.req.query["limit"] ?? 100; // if {limit} is not presented default value is 100 
+    context.log("offset=$id, limit=$limit");
 
     var dbApi = Databases(client);
-    var list = await dbApi.listDocuments(
-      databaseId: "nuclone_db", 
-      collectionId: "posts",
-      queries: [
-        Query.offset(offset),
-        Query.limit(limit),
-        Query.orderAsc("\$createdAt")
-      ]
-    );
+    DocumentList list;
+    if (id == null) {
+      list = await dbApi.listDocuments(
+        databaseId: "nuclone_db", 
+        collectionId: "posts",
+        queries: [
+          Query.limit(limit)
+        ]
+      );
+    } else {
+      list = await dbApi.listDocuments(
+        databaseId: "nuclone_db", 
+        collectionId: "posts",
+        queries: [
+          Query.limit(limit),
+          Query.cursorAfter(id),
+          Query.orderAsc("\$createdAt")
+        ]
+      );
+    }
     context.log("response = ${list.toMap()}");
     return context.res.json(list.toMap());
   } catch (error, stacktrace) {
