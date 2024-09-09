@@ -10,8 +10,8 @@ Future<dynamic> main(final context) async {
     .setKey(Platform.environment["APPWRITE_FUNCTION_REG"]);
 
   try {
-    var id = context.req.query["id"];
-    var limit = context.req.query["limit"] ?? 100; // if {limit} is not presented default value is 100 
+    String? id = context.req.query["id"];
+    int limit = int.tryParse(context.req.query["limit"]) ?? 100; // if {limit} is not presented default value is 100 
     context.log("offset=$id, limit=$limit");
 
     var dbApi = Databases(client);
