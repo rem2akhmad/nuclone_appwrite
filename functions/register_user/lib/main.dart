@@ -10,7 +10,7 @@ Future<dynamic> main(final context) async {
   
   final client = Client()
      .setEndpoint('http://appwrite/v1')
-     .setProject("6698e6f20001a4a59393")
+     .setProject(Platform.environment["PROJECT_ID"])
      .setKey(Platform.environment["APPWRITE_FUNCTION_REG"]);
 
   try {
