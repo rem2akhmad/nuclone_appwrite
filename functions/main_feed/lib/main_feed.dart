@@ -11,7 +11,7 @@ Future<dynamic> main(final context) async {
 
   try {
     String? id = context.req.query["id"];
-    int limit = int.tryParse(context.req.query["limit"]) ?? 100; // if {limit} is not presented default value is 100 
+    int limit = int.tryParse(context.req.query["limit"]) ?? 10; // if {limit} is not presented default value is 10 
     context.log("offset=$id, limit=$limit");
 
     var dbApi = Databases(client);
@@ -21,7 +21,8 @@ Future<dynamic> main(final context) async {
         databaseId: "nuclone_db", 
         collectionId: "posts",
         queries: [
-          Query.limit(limit)
+          Query.limit(limit),
+          Query.orderDesc("\$createdAt")
         ]
       );
     } else {
@@ -31,7 +32,7 @@ Future<dynamic> main(final context) async {
         queries: [
           Query.limit(limit),
           Query.cursorAfter(id),
-          Query.orderAsc("\$createdAt")
+          Query.orderDesc("\$createdAt")
         ]
       );
     }
