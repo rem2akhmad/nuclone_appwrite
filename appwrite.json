@@ -1,0 +1,815 @@
+{
+    "projectId": "6698e6f20001a4a59393",
+    "functions": [
+        {
+            "$id": "main_feed",
+            "execute": [
+                "any",
+                "guests"
+            ],
+            "name": "main_feed",
+            "enabled": true,
+            "logging": true,
+            "runtime": "dart-3.3",
+            "events": [],
+            "schedule": "",
+            "timeout": 15,
+            "entrypoint": "lib/main_feed.dart",
+            "commands": "dart pub get",
+            "path": "functions/main_feed"
+        },
+        {
+            "$id": "669e8a4e001bffa65360",
+            "execute": [],
+            "name": "regitster_user",
+            "enabled": true,
+            "logging": true,
+            "runtime": "dart-3.3",
+            "events": [
+                "users.*.create"
+            ],
+            "schedule": "",
+            "timeout": 15,
+            "entrypoint": "lib/main.dart",
+            "commands": "dart pub get",
+            "path": "functions/regitster_user"
+        },
+        {
+            "$id": "delete_post",
+            "execute": [],
+            "name": "delete_post",
+            "enabled": true,
+            "logging": true,
+            "runtime": "dart-3.3",
+            "events": [
+                "databases.*.collections.posts.documents.*.delete"
+            ],
+            "schedule": "",
+            "timeout": 15,
+            "entrypoint": "lib/delete_post.dart",
+            "commands": "dart pub get",
+            "path": "functions/delete_post"
+        },
+        {
+            "$id": "delete_user",
+            "execute": [],
+            "name": "delete_user",
+            "enabled": true,
+            "logging": true,
+            "runtime": "dart-3.3",
+            "events": [
+                "users.*.delete"
+            ],
+            "schedule": "",
+            "timeout": 15,
+            "entrypoint": "lib/delete_user.dart",
+            "commands": "dart pub get",
+            "path": "functions/delete_user"
+        }
+    ],
+    "projectName": "nuclone.app",
+    "settings": {
+        "services": {
+            "account": true,
+            "avatars": false,
+            "databases": true,
+            "locale": true,
+            "health": true,
+            "storage": true,
+            "teams": false,
+            "users": true,
+            "functions": true,
+            "graphql": true,
+            "messaging": false
+        },
+        "auth": {
+            "methods": {
+                "jwt": false,
+                "phone": false,
+                "invites": false,
+                "anonymous": true,
+                "email-otp": false,
+                "magic-url": false,
+                "email-password": true
+            },
+            "security": {
+                "duration": 31536000,
+                "limit": 0,
+                "sessionsLimit": 10,
+                "passwordHistory": 0,
+                "passwordDictionary": false,
+                "personalDataCheck": false
+            }
+        }
+    },
+    "databases": [
+        {
+            "$id": "nuclone_db",
+            "name": "nuclone_db",
+            "enabled": true
+        }
+    ],
+    "collections": [
+        {
+            "$id": "users",
+            "$permissions": [
+                "read(\"guests\")",
+                "read(\"users\")"
+            ],
+            "databaseId": "nuclone_db",
+            "name": "users",
+            "enabled": true,
+            "documentSecurity": true,
+            "attributes": [
+                {
+                    "key": "accountId",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "size": 256,
+                    "default": null
+                },
+                {
+                    "key": "email",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 1024,
+                    "default": null
+                },
+                {
+                    "key": "username",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 1024,
+                    "default": null
+                },
+                {
+                    "key": "avatar",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 4096,
+                    "default": null
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "index_key",
+                    "type": "unique",
+                    "status": "available",
+                    "attributes": [
+                        "accountId"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "index_username",
+                    "type": "fulltext",
+                    "status": "available",
+                    "attributes": [
+                        "username"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "posts",
+            "$permissions": [
+                "create(\"users\")",
+                "read(\"users\")"
+            ],
+            "databaseId": "nuclone_db",
+            "name": "posts",
+            "enabled": true,
+            "documentSecurity": true,
+            "attributes": [
+                {
+                    "key": "description",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 4096,
+                    "default": null
+                },
+                {
+                    "key": "user",
+                    "type": "relationship",
+                    "required": false,
+                    "array": false,
+                    "relatedCollection": "users",
+                    "relationType": "manyToOne",
+                    "twoWay": false,
+                    "twoWayKey": "66a27035001b268293fc",
+                    "onDelete": "setNull",
+                    "side": "parent"
+                },
+                {
+                    "key": "photoUrl",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "size": 4096,
+                    "default": null
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "posts_index",
+                    "type": "key",
+                    "status": "available",
+                    "attributes": [
+                        "$id"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "posts_create_date_index",
+                    "type": "key",
+                    "status": "available",
+                    "attributes": [
+                        "$createdAt"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "66c1ea180000fd1fecd7",
+            "$permissions": [
+                "create(\"users\")",
+                "read(\"users\")"
+            ],
+            "databaseId": "nuclone_db",
+            "name": "user_connections",
+            "enabled": true,
+            "documentSecurity": true,
+            "attributes": [
+                {
+                    "key": "usersB",
+                    "type": "relationship",
+                    "required": false,
+                    "array": false,
+                    "relatedCollection": "users",
+                    "relationType": "manyToOne",
+                    "twoWay": false,
+                    "twoWayKey": "66c1efcd002d00b6b6a9",
+                    "onDelete": "setNull",
+                    "side": "parent"
+                },
+                {
+                    "key": "usersA",
+                    "type": "relationship",
+                    "required": false,
+                    "array": false,
+                    "relatedCollection": "users",
+                    "relationType": "manyToOne",
+                    "twoWay": false,
+                    "twoWayKey": "66c1f03c00336a475d9e",
+                    "onDelete": "setNull",
+                    "side": "parent"
+                }
+            ],
+            "indexes": []
+        }
+    ],
+    "buckets": [
+        {
+            "$id": "avatars",
+            "$permissions": [
+                "create(\"users\")",
+                "read(\"users\")",
+                "read(\"any\")",
+                "read(\"guests\")"
+            ],
+            "fileSecurity": false,
+            "name": "avatars",
+            "enabled": true,
+            "maximumFileSize": 30000000,
+            "allowedFileExtensions": [
+                "jpg",
+                "png",
+                "jpeg"
+            ],
+            "compression": "none",
+            "encryption": false,
+            "antivirus": false
+        },
+        {
+            "$id": "66a267a489611545bcb6",
+            "$permissions": [
+                "create(\"user:66a267a489611545bcb6\")",
+                "read(\"user:66a267a489611545bcb6\")",
+                "update(\"user:66a267a489611545bcb6\")",
+                "delete(\"user:66a267a489611545bcb6\")",
+                "read(\"users\")"
+            ],
+            "fileSecurity": false,
+            "name": "66a267a489611545bcb6",
+            "enabled": true,
+            "maximumFileSize": 30000000,
+            "allowedFileExtensions": [
+                "jpg",
+                "png",
+                "jpeg"
+            ],
+            "compression": "none",
+            "encryption": false,
+            "antivirus": false
+        },
+        {
+            "$id": "66a5175b9ac07d3f8cc4",
+            "$permissions": [
+                "create(\"user:66a5175b9ac07d3f8cc4\")",
+                "update(\"user:66a5175b9ac07d3f8cc4\")",
+                "delete(\"user:66a5175b9ac07d3f8cc4\")",
+                "read(\"user:66a5175b9ac07d3f8cc4\")",
+                "read(\"users\")"
+            ],
+            "fileSecurity": false,
+            "name": "66a5175b9ac07d3f8cc4",
+            "enabled": true,
+            "maximumFileSize": 30000000,
+            "allowedFileExtensions": [
+                "jpg",
+                "png",
+                "jpeg"
+            ],
+            "compression": "none",
+            "encryption": false,
+            "antivirus": false
+        },
+        {
+            "$id": "66a9161a003cc97d66c7",
+            "$permissions": [
+                "create(\"user:66a9161a003cc97d66c7\")",
+                "update(\"user:66a9161a003cc97d66c7\")",
+                "delete(\"user:66a9161a003cc97d66c7\")",
+                "read(\"user:66a9161a003cc97d66c7\")",
+                "read(\"users\")"
+            ],
+            "fileSecurity": false,
+            "name": "66a9161a003cc97d66c7",
+            "enabled": true,
+            "maximumFileSize": 30000000,
+            "allowedFileExtensions": [
+                "jpg",
+                "png",
+                "jpeg"
+            ],
+            "compression": "none",
+            "encryption": false,
+            "antivirus": false
+        },
+        {
+            "$id": "66a91b5ec8fb2b7bdf03",
+            "$permissions": [
+                "create(\"user:66a91b5ec8fb2b7bdf03\")",
+                "update(\"user:66a91b5ec8fb2b7bdf03\")",
+                "delete(\"user:66a91b5ec8fb2b7bdf03\")",
+                "read(\"user:66a91b5ec8fb2b7bdf03\")",
+                "read(\"users\")"
+            ],
+            "fileSecurity": false,
+            "name": "66a91b5ec8fb2b7bdf03",
+            "enabled": true,
+            "maximumFileSize": 30000000,
+            "allowedFileExtensions": [
+                "jpg",
+                "png",
+                "jpeg"
+            ],
+            "compression": "none",
+            "encryption": false,
+            "antivirus": false
+        },
+        {
+            "$id": "66cf36111e430c69da84",
+            "$permissions": [
+                "create(\"user:66cf36111e430c69da84\")",
+                "update(\"user:66cf36111e430c69da84\")",
+                "delete(\"user:66cf36111e430c69da84\")",
+                "read(\"user:66cf36111e430c69da84\")",
+                "read(\"users\")"
+            ],
+            "fileSecurity": false,
+            "name": "66cf36111e430c69da84",
+            "enabled": true,
+            "maximumFileSize": 30000000,
+            "allowedFileExtensions": [
+                "jpg",
+                "png",
+                "jpeg"
+            ],
+            "compression": "none",
+            "encryption": false,
+            "antivirus": false
+        },
+        {
+            "$id": "66d0501cb5666d74ac13",
+            "$permissions": [
+                "create(\"user:66d0501cb5666d74ac13\")",
+                "update(\"user:66d0501cb5666d74ac13\")",
+                "delete(\"user:66d0501cb5666d74ac13\")",
+                "read(\"user:66d0501cb5666d74ac13\")",
+                "read(\"users\")"
+            ],
+            "fileSecurity": false,
+            "name": "66d0501cb5666d74ac13",
+            "enabled": true,
+            "maximumFileSize": 30000000,
+            "allowedFileExtensions": [
+                "jpg",
+                "png",
+                "jpeg"
+            ],
+            "compression": "none",
+            "encryption": false,
+            "antivirus": false
+        },
+        {
+            "$id": "66d0785935b1085d14e0",
+            "$permissions": [
+                "create(\"user:66d0785935b1085d14e0\")",
+                "update(\"user:66d0785935b1085d14e0\")",
+                "delete(\"user:66d0785935b1085d14e0\")",
+                "read(\"user:66d0785935b1085d14e0\")",
+                "read(\"users\")"
+            ],
+            "fileSecurity": false,
+            "name": "66d0785935b1085d14e0",
+            "enabled": true,
+            "maximumFileSize": 30000000,
+            "allowedFileExtensions": [
+                "jpg",
+                "png",
+                "jpeg"
+            ],
+            "compression": "none",
+            "encryption": false,
+            "antivirus": false
+        },
+        {
+            "$id": "66d0a2a0a6782a33ba16",
+            "$permissions": [
+                "create(\"user:66d0a2a0a6782a33ba16\")",
+                "update(\"user:66d0a2a0a6782a33ba16\")",
+                "delete(\"user:66d0a2a0a6782a33ba16\")",
+                "read(\"user:66d0a2a0a6782a33ba16\")",
+                "read(\"users\")"
+            ],
+            "fileSecurity": false,
+            "name": "66d0a2a0a6782a33ba16",
+            "enabled": true,
+            "maximumFileSize": 30000000,
+            "allowedFileExtensions": [
+                "jpg",
+                "png",
+                "jpeg"
+            ],
+            "compression": "none",
+            "encryption": false,
+            "antivirus": false
+        },
+        {
+            "$id": "66d0a2f7c78b5d7a84d3",
+            "$permissions": [
+                "create(\"user:66d0a2f7c78b5d7a84d3\")",
+                "update(\"user:66d0a2f7c78b5d7a84d3\")",
+                "delete(\"user:66d0a2f7c78b5d7a84d3\")",
+                "read(\"user:66d0a2f7c78b5d7a84d3\")",
+                "read(\"users\")"
+            ],
+            "fileSecurity": false,
+            "name": "66d0a2f7c78b5d7a84d3",
+            "enabled": true,
+            "maximumFileSize": 30000000,
+            "allowedFileExtensions": [
+                "jpg",
+                "png",
+                "jpeg"
+            ],
+            "compression": "none",
+            "encryption": false,
+            "antivirus": false
+        },
+        {
+            "$id": "66d0a39611ea020363ae",
+            "$permissions": [
+                "create(\"user:66d0a39611ea020363ae\")",
+                "update(\"user:66d0a39611ea020363ae\")",
+                "delete(\"user:66d0a39611ea020363ae\")",
+                "read(\"user:66d0a39611ea020363ae\")",
+                "read(\"users\")"
+            ],
+            "fileSecurity": false,
+            "name": "66d0a39611ea020363ae",
+            "enabled": true,
+            "maximumFileSize": 30000000,
+            "allowedFileExtensions": [
+                "jpg",
+                "png",
+                "jpeg"
+            ],
+            "compression": "none",
+            "encryption": false,
+            "antivirus": false
+        },
+        {
+            "$id": "66d0a4a55f66eacbd9c7",
+            "$permissions": [
+                "create(\"user:66d0a4a55f66eacbd9c7\")",
+                "update(\"user:66d0a4a55f66eacbd9c7\")",
+                "delete(\"user:66d0a4a55f66eacbd9c7\")",
+                "read(\"user:66d0a4a55f66eacbd9c7\")",
+                "read(\"users\")"
+            ],
+            "fileSecurity": false,
+            "name": "66d0a4a55f66eacbd9c7",
+            "enabled": true,
+            "maximumFileSize": 30000000,
+            "allowedFileExtensions": [
+                "jpg",
+                "png",
+                "jpeg"
+            ],
+            "compression": "none",
+            "encryption": false,
+            "antivirus": false
+        },
+        {
+            "$id": "66d0a4f65454abf94f03",
+            "$permissions": [
+                "create(\"user:66d0a4f65454abf94f03\")",
+                "update(\"user:66d0a4f65454abf94f03\")",
+                "delete(\"user:66d0a4f65454abf94f03\")",
+                "read(\"user:66d0a4f65454abf94f03\")",
+                "read(\"users\")"
+            ],
+            "fileSecurity": false,
+            "name": "66d0a4f65454abf94f03",
+            "enabled": true,
+            "maximumFileSize": 30000000,
+            "allowedFileExtensions": [
+                "jpg",
+                "png",
+                "jpeg"
+            ],
+            "compression": "none",
+            "encryption": false,
+            "antivirus": false
+        },
+        {
+            "$id": "66d0a7ecd8bddebeb0ef",
+            "$permissions": [
+                "create(\"user:66d0a7ecd8bddebeb0ef\")",
+                "update(\"user:66d0a7ecd8bddebeb0ef\")",
+                "delete(\"user:66d0a7ecd8bddebeb0ef\")",
+                "read(\"user:66d0a7ecd8bddebeb0ef\")",
+                "read(\"users\")"
+            ],
+            "fileSecurity": false,
+            "name": "66d0a7ecd8bddebeb0ef",
+            "enabled": true,
+            "maximumFileSize": 30000000,
+            "allowedFileExtensions": [
+                "jpg",
+                "png",
+                "jpeg"
+            ],
+            "compression": "none",
+            "encryption": false,
+            "antivirus": false
+        },
+        {
+            "$id": "66d0ab249f99746ff55e",
+            "$permissions": [
+                "create(\"user:66d0ab249f99746ff55e\")",
+                "update(\"user:66d0ab249f99746ff55e\")",
+                "delete(\"user:66d0ab249f99746ff55e\")",
+                "read(\"user:66d0ab249f99746ff55e\")",
+                "read(\"users\")"
+            ],
+            "fileSecurity": false,
+            "name": "66d0ab249f99746ff55e",
+            "enabled": true,
+            "maximumFileSize": 30000000,
+            "allowedFileExtensions": [
+                "jpg",
+                "png",
+                "jpeg"
+            ],
+            "compression": "none",
+            "encryption": false,
+            "antivirus": false
+        },
+        {
+            "$id": "66d0abf2960fcf6ce94c",
+            "$permissions": [
+                "create(\"user:66d0abf2960fcf6ce94c\")",
+                "update(\"user:66d0abf2960fcf6ce94c\")",
+                "delete(\"user:66d0abf2960fcf6ce94c\")",
+                "read(\"user:66d0abf2960fcf6ce94c\")",
+                "read(\"users\")"
+            ],
+            "fileSecurity": false,
+            "name": "66d0abf2960fcf6ce94c",
+            "enabled": true,
+            "maximumFileSize": 30000000,
+            "allowedFileExtensions": [
+                "jpg",
+                "png",
+                "jpeg"
+            ],
+            "compression": "none",
+            "encryption": false,
+            "antivirus": false
+        },
+        {
+            "$id": "66d0af054ddfc50ec32f",
+            "$permissions": [
+                "create(\"user:66d0af054ddfc50ec32f\")",
+                "update(\"user:66d0af054ddfc50ec32f\")",
+                "delete(\"user:66d0af054ddfc50ec32f\")",
+                "read(\"user:66d0af054ddfc50ec32f\")",
+                "read(\"users\")"
+            ],
+            "fileSecurity": false,
+            "name": "66d0af054ddfc50ec32f",
+            "enabled": true,
+            "maximumFileSize": 30000000,
+            "allowedFileExtensions": [
+                "jpg",
+                "png",
+                "jpeg"
+            ],
+            "compression": "none",
+            "encryption": false,
+            "antivirus": false
+        },
+        {
+            "$id": "66d180068bcccba1d94b",
+            "$permissions": [
+                "create(\"user:66d180068bcccba1d94b\")",
+                "update(\"user:66d180068bcccba1d94b\")",
+                "delete(\"user:66d180068bcccba1d94b\")",
+                "read(\"user:66d180068bcccba1d94b\")",
+                "read(\"users\")"
+            ],
+            "fileSecurity": false,
+            "name": "66d180068bcccba1d94b",
+            "enabled": true,
+            "maximumFileSize": 30000000,
+            "allowedFileExtensions": [
+                "jpg",
+                "png",
+                "jpeg"
+            ],
+            "compression": "none",
+            "encryption": false,
+            "antivirus": false
+        },
+        {
+            "$id": "66d18222a8ec5c0254f2",
+            "$permissions": [
+                "create(\"user:66d18222a8ec5c0254f2\")",
+                "update(\"user:66d18222a8ec5c0254f2\")",
+                "delete(\"user:66d18222a8ec5c0254f2\")",
+                "read(\"user:66d18222a8ec5c0254f2\")",
+                "read(\"users\")"
+            ],
+            "fileSecurity": false,
+            "name": "66d18222a8ec5c0254f2",
+            "enabled": true,
+            "maximumFileSize": 30000000,
+            "allowedFileExtensions": [
+                "jpg",
+                "png",
+                "jpeg"
+            ],
+            "compression": "none",
+            "encryption": false,
+            "antivirus": false
+        },
+        {
+            "$id": "66d183391907dabb7798",
+            "$permissions": [
+                "create(\"user:66d183391907dabb7798\")",
+                "update(\"user:66d183391907dabb7798\")",
+                "delete(\"user:66d183391907dabb7798\")",
+                "read(\"user:66d183391907dabb7798\")",
+                "read(\"users\")"
+            ],
+            "fileSecurity": false,
+            "name": "66d183391907dabb7798",
+            "enabled": true,
+            "maximumFileSize": 30000000,
+            "allowedFileExtensions": [
+                "jpg",
+                "png",
+                "jpeg"
+            ],
+            "compression": "none",
+            "encryption": false,
+            "antivirus": false
+        },
+        {
+            "$id": "66d1a094c24e6f293296",
+            "$permissions": [
+                "create(\"user:66d1a094c24e6f293296\")",
+                "update(\"user:66d1a094c24e6f293296\")",
+                "delete(\"user:66d1a094c24e6f293296\")",
+                "read(\"user:66d1a094c24e6f293296\")",
+                "read(\"users\")"
+            ],
+            "fileSecurity": false,
+            "name": "66d1a094c24e6f293296",
+            "enabled": true,
+            "maximumFileSize": 30000000,
+            "allowedFileExtensions": [
+                "jpg",
+                "png",
+                "jpeg"
+            ],
+            "compression": "none",
+            "encryption": false,
+            "antivirus": false
+        },
+        {
+            "$id": "66d1ad9cd39896436df6",
+            "$permissions": [
+                "create(\"user:66d1ad9cd39896436df6\")",
+                "update(\"user:66d1ad9cd39896436df6\")",
+                "delete(\"user:66d1ad9cd39896436df6\")",
+                "read(\"user:66d1ad9cd39896436df6\")",
+                "read(\"users\")"
+            ],
+            "fileSecurity": false,
+            "name": "66d1ad9cd39896436df6",
+            "enabled": true,
+            "maximumFileSize": 30000000,
+            "allowedFileExtensions": [
+                "jpg",
+                "png",
+                "jpeg"
+            ],
+            "compression": "none",
+            "encryption": false,
+            "antivirus": false
+        },
+        {
+            "$id": "66d1b0e16ad11d00592c",
+            "$permissions": [
+                "create(\"user:66d1b0e16ad11d00592c\")",
+                "update(\"user:66d1b0e16ad11d00592c\")",
+                "delete(\"user:66d1b0e16ad11d00592c\")",
+                "read(\"user:66d1b0e16ad11d00592c\")",
+                "read(\"users\")"
+            ],
+            "fileSecurity": false,
+            "name": "66d1b0e16ad11d00592c",
+            "enabled": true,
+            "maximumFileSize": 30000000,
+            "allowedFileExtensions": [
+                "jpg",
+                "png",
+                "jpeg"
+            ],
+            "compression": "none",
+            "encryption": false,
+            "antivirus": false
+        },
+        {
+            "$id": "66d1b6529993f1146938",
+            "$permissions": [
+                "create(\"user:66d1b6529993f1146938\")",
+                "update(\"user:66d1b6529993f1146938\")",
+                "delete(\"user:66d1b6529993f1146938\")",
+                "read(\"user:66d1b6529993f1146938\")",
+                "read(\"users\")"
+            ],
+            "fileSecurity": false,
+            "name": "66d1b6529993f1146938",
+            "enabled": true,
+            "maximumFileSize": 30000000,
+            "allowedFileExtensions": [
+                "jpg",
+                "png",
+                "jpeg"
+            ],
+            "compression": "none",
+            "encryption": false,
+            "antivirus": false
+        }
+    ]
+}
